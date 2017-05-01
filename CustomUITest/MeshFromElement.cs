@@ -16,12 +16,12 @@ namespace LINE.DynamoNodes
     /// </summary>
     [NodeName("Mesh From Element Preview")]
     [NodeDescription("Extract a mesh from a Revit element.")]
-    [NodeCategory("Preview Nodes")]
+    [NodeCategory("PreviewTests")]
     [IsDesignScriptCompatible]
-    public class MeshFromElement : NodeModel
+    public class MeshFromElement : NodeModel, IGraphicItem
     {
         List<Autodesk.DesignScript.Geometry.Mesh> _meshes;
-
+        private Autodesk.DesignScript.Geometry.CoordinateSystem transform { get; set; }
 
         public MeshFromElement()
         {
@@ -29,7 +29,11 @@ namespace LINE.DynamoNodes
             AddPort(PortType.Input, new PortData("elems", "Revit Elements to extract meshes from"), 0);
             AddPort(PortType.Input, new PortData("curView", "Restrict extracted meshes to current view?", AstFactory.BuildBooleanNode(false)), 1);
             AddPort(PortType.Output, new PortData("meshes", "Revit Element Mesh(es)"), 2);
-            //RegisterAllPorts();
+
+            // This transform is being used for IGraphicItem transform. I'm not sure exactly why a transform that does not change
+            // the geometry is necessary, but it's left in place for now.
+            transform = Autodesk.DesignScript.Geometry.CoordinateSystem.ByOrigin(0, 0, 0);
+
         }
 
         public override IEnumerable<AssociativeNode> BuildOutputAst(List<AssociativeNode> inputAstNodes)
@@ -70,8 +74,25 @@ namespace LINE.DynamoNodes
                     if (m != null)
                     {
                         m.Tessellate(render, factory.TessellationParameters);
+                        //var method = render.GetType().GetMethod("SetTransform", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, null, new[] { typeof(double[]) }, null);
+
+                        //if (method != null)
+                        //{
+                        //    method.Invoke(render, new object[] { new double[]
+                        //    {
+                        //       transform.XAxis.X, transform.XAxis.Y, transform.XAxis.Z, 0,
+                        //       transform.YAxis.X, transform.YAxis.Y, transform.YAxis.Z, 0,
+                        //       transform.ZAxis.X, transform.ZAxis.Y, transform.ZAxis.Z, 0,
+                        //       transform.Origin.X, transform.Origin.Y, transform.Origin.Z, 1
+                        //    }
+                        //    });
+                        //}
                     }
                 }
+                  
+                // NOTE: I'm not sure calling the Tessellate method from IGraphicItem is necessary here
+                // but I've tried calling and am leaving it in here just in case I do wind up needing it.
+                //Tessellate(render, factory.TessellationParameters);
                 return true;
             }
             catch { }
@@ -105,6 +126,32 @@ namespace LINE.DynamoNodes
             }
 
             return meshes;
+        }
+
+        public void Tessellate(IRenderPackage package, TessellationParameters parameters)
+        {
+
+            foreach(Autodesk.DesignScript.Geometry.Mesh m in _meshes)
+            {
+                m.Tessellate(package, parameters);
+            }
+
+            //look for the method SetTransform with the double[] argument list.
+            var method = package.GetType().
+            GetMethod("SetTransform", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                    null,
+                    new[] { typeof(double[]) }, null);
+
+            //if the method exists call it using our current transform.
+            if (method != null)
+            {
+                method.Invoke(package, new object[] { new double[]
+                {transform.XAxis.X,transform.XAxis.Y,transform.XAxis.Z,0,
+                transform.YAxis.X,transform.YAxis.Y,transform.YAxis.Z,0,
+                transform.ZAxis.X,transform.ZAxis.Y,transform.ZAxis.Z,0,
+                transform.Origin.X,transform.Origin.Y,transform.Origin.Z,1
+                }});
+            }
         }
     }
 }

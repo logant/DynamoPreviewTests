@@ -7,9 +7,9 @@ using Autodesk.Revit.DB;
 using System.Collections;
 using Revit.GeometryConversion;
 
-namespace DynamoPreview
+namespace PreviewTests
 {
-    public class ZeroTouchTest
+    public static class ZeroTouch
     {
         static Document rDoc = null;
         static Options geoOpt;
