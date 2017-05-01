@@ -1,0 +1,22 @@
+{
+   "license":"",
+   "file_hash":null,
+   "name":"PreviewTest",
+   "version":"1.0.0",
+   "description":"Testing node previews for geometry",
+   "group":"PreviewTest",
+   "keywords":[ "preview","mesh", "element", "elem"],
+   "dependencies":[],
+   "contents":"Preview Nodes",
+   "engine_version":"1.3.0",
+   "engine":"dynamo",
+   "engine_metadata":"",
+   "site_url":"www.hksline.com",
+   "repository_url":"",
+   "contains_binaries":true,
+   "node_libraries":[
+    "CustomUITest, Version=1.0.0, Culture=neutral, PublicKeyToken=null",
+    "CustomUIFunc, Version=1.0.0, Culture=neutral, PublicKeyToken=null",
+    "ZeroTouchPreview, Version=1.0.0, Culture=neutral, PublicKeyToken=null"
+   ]
+}
