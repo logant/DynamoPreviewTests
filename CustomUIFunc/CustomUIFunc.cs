@@ -23,6 +23,42 @@ namespace CustomUIFunc
 
         private static List<Autodesk.DesignScript.Geometry.Mesh> simpleMeshes = new List<Autodesk.DesignScript.Geometry.Mesh>();
 
+
+        /// <summary>
+        /// This method just creates a 10x10x10 cube and outputs it if the bool input is set to true.
+        /// This was just a simple test to see if it would show up.
+        /// </summary>
+        public static Autodesk.DesignScript.Geometry.Mesh GetSimpleMesh(bool returnBox)
+        {
+            // Build vertex list
+            List<Autodesk.DesignScript.Geometry.Point> vertices = new List<Autodesk.DesignScript.Geometry.Point>();
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(0, 0, 0));
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(10, 0, 0));
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(10, 10, 0));
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(0, 10, 0));
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(0, 0, 10));
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(10, 0, 10));
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(10, 10, 10));
+            vertices.Add(Autodesk.DesignScript.Geometry.Point.ByCoordinates(0, 10, 10));
+
+            // build mesh faces
+            List<IndexGroup> faces = new List<IndexGroup>();
+            faces.Add(IndexGroup.ByIndices(3, 2, 1, 0));
+            faces.Add(IndexGroup.ByIndices(4, 5, 1, 0));
+            faces.Add(IndexGroup.ByIndices(5, 6, 2, 1));
+            faces.Add(IndexGroup.ByIndices(6, 7, 3, 2));
+            faces.Add(IndexGroup.ByIndices(7, 4, 0, 3));
+            faces.Add(IndexGroup.ByIndices(7, 6, 5, 4));
+
+            // create the mesh
+            Autodesk.DesignScript.Geometry.Mesh mesh = Autodesk.DesignScript.Geometry.Mesh.ByPointsFaceIndices(vertices, faces);
+
+            if (returnBox)
+                return mesh;
+            else
+                return null;
+        }
+               
         public static object GetMeshes(List<Revit.Elements.Element> elements, bool currentView)
         {
             currentViewOnly = currentView;

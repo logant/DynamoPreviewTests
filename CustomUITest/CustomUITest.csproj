@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MeshFromElement.cs" />
+    <Compile Include="MeshFromElement_Simple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
